@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #define X 1000000
-#define Z 2147483647
+#define Z 1000000
 int main(int argc,char *argv[]){
   unsigned char a=0,w=0,h='#',q='?';
   int p=0,j=0,y=0;
@@ -28,7 +28,7 @@ int main(int argc,char *argv[]){
     switch(b[y]){
       case '*':
         if(y%2){
-          t[p]+=251;p=(p+999983)%X;
+          t[p]+=251;p+=999983;if(p>X-1)p-=X;
         }
         else{
           t[p]=std::cin.get()^q;y-=3;if(y<0) return 0;
@@ -36,11 +36,10 @@ int main(int argc,char *argv[]){
         break;
       case '#':
         if(t[p]==0){
-          y-=7;b[y]=(b[y]=='*'?'#':b[y]=='#'?'?':'*');
-          if(y<0) return 0;
+          y-=7;if(y<0)return 0;b[y]=(b[y]=='*'?'#':b[y]=='#'?'?':'*');
         }
         else{
-          p=(p-999979)%X;t[p]+=241;
+          p=(p-999979);if(p<0)p+=X;t[p]+=241;
         }
         break;
       case '?':
@@ -49,7 +48,7 @@ int main(int argc,char *argv[]){
         }
         else{
           if(t[p]==0){
-            y+=12;if(y>=j) return 0;
+            y+=12;if(y>=j)return 0;
           }
           else{
             y=g%j;p=g%X;
