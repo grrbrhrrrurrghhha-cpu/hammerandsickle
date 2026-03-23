@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <random>
 
-const std::string target = "*******#";
+const std::string target = "???????*?*???#";
 const int bw = 10000;
 const int limit = 10000000;
 const bool debug = false;
@@ -18,13 +18,10 @@ struct Program {
   float rank = 0.0f;
 };
 
-inline void rank(struct Program& program, const std::string target, std::mt19937& engine, std::uniform_real_distribution<float>& distribution) {
+inline void rank(struct Program& program, std::mt19937& engine, std::uniform_real_distribution<float>& distribution) {
   program.rank = 0.0f;
-  for (int i = 0; i < (int)std::min(target.length(), program.b.length()); i++)
-    program.rank += (target[i] == program.b[i] ? 1000.0f : -100.0f);
+  program.rank += program.b.length() * 1000.0f;
   program.rank -= 0.05f * (float)program.code.length();
-  program.rank += ((program.g >> 16) & 0xFF == 23) * 1000.0f;
-  program.rank += (program.p % 2 == 0) * 1000.0f;
   program.rank += distribution(engine);
 }
 
@@ -57,7 +54,7 @@ bool step(struct Program& program, const std::string target) {
 }
 
 bool constraints(const struct Program program) {
-  return program.p % 2 != 0;
+  return ((char)((program.g >> 16) & 0xFF) == ('#' ^ '4')) && program.p % 2 == 0;
 }
 
 void search(const std::string target, std::vector<struct Program>& beam) {
@@ -76,7 +73,7 @@ void search(const std::string target, std::vector<struct Program>& beam) {
   	  	struct Program next = program;
         next.code += instruction;
   	  	if (step(next, target)) {
-  	  	  rank(next, target, engine, distribution);
+  	  	  rank(next, engine, distribution);
           if ((next.b.length() == target.length()) && constraints(next)) {
             std::cout << next.code;
             return;
