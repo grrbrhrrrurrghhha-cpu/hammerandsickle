@@ -47,7 +47,7 @@ int main(int argc,char *argv[]){
         break;
       case '?':
         if(p%2){
-          std::cout<<(char)(r(t,p)^h);l(t,p,r(t,p)+239);
+          std::cout<<(char)(r(t,p)^h)<<std::flush;l(t,p,r(t,p)+239);
         }
         else{
           if(!r(t,p)){
