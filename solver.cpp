@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <random>
 
-const std::string target = "???????*?*???#";
+const std::string target = "*******#";
 const int bw = 10000;
 const int limit = 10000000;
 const bool debug = false;
@@ -57,7 +57,7 @@ bool step(struct Program& program, const std::string target) {
 }
 
 bool constraints(const struct Program program) {
-  return ((char)((program.g >> 16) & 0xFF) == 23) && program.p % 2 == 0;
+  return program.p % 2 != 0;
 }
 
 void search(const std::string target, std::vector<struct Program>& beam) {
@@ -78,7 +78,7 @@ void search(const std::string target, std::vector<struct Program>& beam) {
   	  	if (step(next, target)) {
   	  	  rank(next, target, engine, distribution);
           if ((next.b.length() == target.length()) && constraints(next)) {
-            std::cout << "Solution: " << next.code << std::endl;
+            std::cout << next.code;
             return;
           }
   	  	  candidates.push_back(std::move(next));
@@ -89,7 +89,7 @@ void search(const std::string target, std::vector<struct Program>& beam) {
   	std::partial_sort(candidates.begin(), candidates.begin() + std::min(bw, (int)candidates.size()), candidates.end(), [](auto& a, auto& b) { return a.rank > b.rank; });
   	candidates.resize(bw);
   	beam = std::move(candidates);
-  	if (debug || i % 1000 == 0)
+  	if (debug)
   	  std::cout << "[Iteration " << i << '/' << limit << ']' << " Best solution: " << beam[0].code << " Progress: " << beam[0].b.length() << '/' << target.length() << std::endl;
   }
 }
